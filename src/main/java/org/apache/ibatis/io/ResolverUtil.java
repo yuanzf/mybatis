@@ -214,6 +214,7 @@ public class ResolverUtil<T> {
    *        classes, e.g. {@code net.sourceforge.stripes}
    */
   public ResolverUtil<T> find(Test test, String packageName) {
+    //将包名转化为路径
     String path = getPackagePath(packageName);
 
     try {

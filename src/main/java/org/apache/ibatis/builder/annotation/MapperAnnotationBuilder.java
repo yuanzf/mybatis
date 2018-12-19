@@ -92,6 +92,7 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
 /**
+ * SQL_PROVIDER_ANNOTATION_TYPES:存储select | update | insert | delete四种provider
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
@@ -116,6 +117,11 @@ public class MapperAnnotationBuilder {
     SQL_PROVIDER_ANNOTATION_TYPES.add(DeleteProvider.class);
   }
 
+  /**
+   * resource = com/yuanzf/base/mapper/UserMapper.java (best guess)
+   * @param configuration
+   * @param type
+   */
   public MapperAnnotationBuilder(Configuration configuration, Class<?> type) {
     String resource = type.getName().replace('.', '/') + ".java (best guess)";
     this.assistant = new MapperBuilderAssistant(configuration, resource);
@@ -125,8 +131,11 @@ public class MapperAnnotationBuilder {
 
   public void parse() {
     String resource = type.toString();
+    //判断类名等于"resource"是否加载过
     if (!configuration.isResourceLoaded(resource)) {
+      //加载对应的mapper.xml文件
       loadXmlResource();
+
       configuration.addLoadedResource(resource);
       assistant.setCurrentNamespace(type.getName());
       parseCache();
@@ -136,6 +145,7 @@ public class MapperAnnotationBuilder {
         try {
           // issue #237
           if (!method.isBridge()) {
+            //解析注解的SQL，通过注解的SQL获取MapperStatement
             parseStatement(method);
           }
         } catch (IncompleteElementException e) {
@@ -143,6 +153,7 @@ public class MapperAnnotationBuilder {
         }
       }
     }
+    //加载Mapper中的SQL语句
     parsePendingMethods();
   }
 
@@ -161,6 +172,9 @@ public class MapperAnnotationBuilder {
     }
   }
 
+  /**
+   * 加载对应的Mapper.xml文件
+   */
   private void loadXmlResource() {
     // Spring may not know the real resource name so we check a flag
     // to prevent loading again a resource twice
@@ -299,6 +313,7 @@ public class MapperAnnotationBuilder {
   void parseStatement(Method method) {
     Class<?> parameterTypeClass = getParameterType(method);
     LanguageDriver languageDriver = getLanguageDriver(method);
+    //解析注解的SQL
     SqlSource sqlSource = getSqlSourceFromAnnotations(method, parameterTypeClass, languageDriver);
     if (sqlSource != null) {
       Options options = method.getAnnotation(Options.class);
@@ -525,6 +540,12 @@ public class MapperAnnotationBuilder {
     return SqlCommandType.valueOf(type.getSimpleName().toUpperCase(Locale.ENGLISH));
   }
 
+  /**
+   * 获取在接口上注解的SQL语句，
+   * 获取在接口上注解的SQL语句，
+   * @param method
+   * @return
+   */
   private Class<? extends Annotation> getSqlAnnotationType(Method method) {
     return chooseAnnotationType(method, SQL_ANNOTATION_TYPES);
   }

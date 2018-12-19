@@ -29,6 +29,9 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * 保存mybatis配置文件
+ * 别名注册
+ * 注册的处理器
  * @author Clinton Begin
  */
 public abstract class BaseBuilder {

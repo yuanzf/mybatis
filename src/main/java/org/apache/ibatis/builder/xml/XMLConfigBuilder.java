@@ -48,6 +48,8 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
+ * localReflectorFactory  缓存信息
+ *
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
@@ -100,19 +102,35 @@ public class XMLConfigBuilder extends BaseBuilder {
     return configuration;
   }
 
+
+  /**
+   * 解析Configuration  到Configuration类中
+   * @param root
+   */
   private void parseConfiguration(XNode root) {
     try {
       //issue #117 read properties first
+      //解析properties节点
       propertiesElement(root.evalNode("properties"));
+      //解析settings节点
       Properties settings = settingsAsProperties(root.evalNode("settings"));
+      //加载VFS的实现
       loadCustomVfs(settings);
+      //解析typeAliases节点，保存在Configuration.class的typeAliasRegistry域中
       typeAliasesElement(root.evalNode("typeAliases"));
+      //解析plugins节点，暂时未用到后面在研究
+      //TODO 加载plugins的实现
       pluginElement(root.evalNode("plugins"));
+      //解析objectFactory节点
       objectFactoryElement(root.evalNode("objectFactory"));
+      //解析objectWrapperFactory节点
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
+      //解析reflectorFactory节点
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
+      //将解析的settings属性设置到对应Configuration的域中。在这里方法了可以查看默认值
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
+      //读取环境节点
       environmentsElement(root.evalNode("environments"));
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
       typeHandlerElement(root.evalNode("typeHandlers"));
@@ -126,9 +144,12 @@ public class XMLConfigBuilder extends BaseBuilder {
     if (context == null) {
       return new Properties();
     }
+    //获取settings的子节点的配置值保存到Properties中，Properties是hashMap  key：子节点的name  value：子节点的属性值
     Properties props = context.getChildrenAsProperties();
     // Check that all settings are known to the configuration class
+    //此处metaConfig保存了Configuration.class
     MetaClass metaConfig = MetaClass.forClass(Configuration.class, localReflectorFactory);
+    //验证每个key是否是不是MyBatis支持的（方法比较巧，以后即使更换了Configuration.class类，代码也不需要更改）
     for (Object key : props.keySet()) {
       if (!metaConfig.hasSetter(String.valueOf(key))) {
         throw new BuilderException("The setting " + key + " is not known.  Make sure you spelled it correctly (case sensitive).");
@@ -137,6 +158,11 @@ public class XMLConfigBuilder extends BaseBuilder {
     return props;
   }
 
+  /**
+   * 指定VFS的实现
+   * @param props
+   * @throws ClassNotFoundException
+   */
   private void loadCustomVfs(Properties props) throws ClassNotFoundException {
     String value = props.getProperty("vfsImpl");
     if (value != null) {
@@ -151,16 +177,26 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 解析typeAliases节点
+   * package和type 只能定义一种
+   * @param parent
+   */
   private void typeAliasesElement(XNode parent) {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
         if ("package".equals(child.getName())) {
+          //包名 -> 路径 -> 加载路径下的包 -> 转换为Set<Class> -> 表里set注册类
           String typeAliasPackage = child.getStringAttribute("name");
           configuration.getTypeAliasRegistry().registerAliases(typeAliasPackage);
         } else {
+           //              (alias 不为空)| -> 则以alias为key注册类
+          //通过type值加载类 ->           |
+          //               (alias 为空)  | -> 检查是否有注解，如果有注解则以注解的值为可以，如果没有注册则以"类名"为key
           String alias = child.getStringAttribute("alias");
           String type = child.getStringAttribute("type");
           try {
+            //加载类型为type的类
             Class<?> clazz = Resources.classForName(type);
             if (alias == null) {
               typeAliasRegistry.registerAlias(clazz);
@@ -268,6 +304,12 @@ public class XMLConfigBuilder extends BaseBuilder {
     configuration.setConfigurationFactory(resolveClass(props.getProperty("configurationFactory")));
   }
 
+  /**
+   *   default属性为必须配置属性，否则会报异常，（在isSpecifiedEnvironment方法中抛出异常）
+   *   当配置多个environment属性时，只会加载一个DateSoruce，id和default相匹配的那个DateSource
+   * @param context
+   * @throws Exception
+   */
   private void environmentsElement(XNode context) throws Exception {
     if (context != null) {
       if (environment == null) {
@@ -277,6 +319,7 @@ public class XMLConfigBuilder extends BaseBuilder {
         String id = child.getStringAttribute("id");
         if (isSpecifiedEnvironment(id)) {
           TransactionFactory txFactory = transactionManagerElement(child.evalNode("transactionManager"));
+          //加载DateSource相关信息
           DataSourceFactory dsFactory = dataSourceElement(child.evalNode("dataSource"));
           DataSource dataSource = dsFactory.getDataSource();
           Environment.Builder environmentBuilder = new Environment.Builder(id)
@@ -318,6 +361,12 @@ public class XMLConfigBuilder extends BaseBuilder {
     throw new BuilderException("Environment declaration requires a TransactionFactory.");
   }
 
+  /**
+   * 加载dataSource相关信息
+   * @param context
+   * @return
+   * @throws Exception
+   */
   private DataSourceFactory dataSourceElement(XNode context) throws Exception {
     if (context != null) {
       String type = context.getStringAttribute("type");
@@ -356,6 +405,16 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 两种配置方法
+   *         || <package name="com.yuanzf.base.mapper"/>                ||
+   *         || <mapper class="com.yuanzf.base.mapper.UserMapper" />    ||
+   *这两种配置方法只能配置一种
+   * 在mapper配置中 有三种配置方法，分别是 "class"、"name"、"resource"这三种属性只能配置一种，否则会抛异常
+   *
+   * @param parent
+   * @throws Exception
+   */
   private void mapperElement(XNode parent) throws Exception {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
@@ -377,6 +436,7 @@ public class XMLConfigBuilder extends BaseBuilder {
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
             mapperParser.parse();
           } else if (resource == null && url == null && mapperClass != null) {
+            //加载mapper接口
             Class<?> mapperInterface = Resources.classForName(mapperClass);
             configuration.addMapper(mapperInterface);
           } else {

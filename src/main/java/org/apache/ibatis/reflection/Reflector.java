@@ -42,6 +42,14 @@ import org.apache.ibatis.reflection.property.PropertyNamer;
  * This class represents a cached set of class definition information that
  * allows for easy mapping between property names and getter/setter methods.
  *
+ * 保存了{# type}类的所有信息
+ * readablePropertyNames 保存所有的可读的阈值 如Configuration.class类中的私有域且有get方法的域
+ * writeablePropertyNames 保存了可以更改值的域  如一个类中公共的域
+ * setMethods  保存了type中所有的set方法（通过Invoker包装后的方法）可以直接调用
+ * getMethods  保存了type所有的get方法 （通过Invoker包装后的方法）
+ * getTypes  get方法名和返回类型的映射
+ * setTypes  set方法名和形参类型的映射
+ * defaultConstructor  保存了所有构造方法
  * @author Clinton Begin
  */
 public class Reflector {

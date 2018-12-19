@@ -50,6 +50,8 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
+ * 保存Configuretion的信息、映射Mapper接口，Mapper.xml配置文件的信息
+ * resource:Mapper.java文件路径
  * @author Clinton Begin
  */
 public class MapperBuilderAssistant extends BaseBuilder {

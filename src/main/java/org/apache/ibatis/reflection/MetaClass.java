@@ -31,11 +31,16 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
  */
 public class MetaClass {
 
+
+  /**
+   * reflectorFactoru就是一个hashMap key：类名   value:Reflector
+   */
   private final ReflectorFactory reflectorFactory;
   private final Reflector reflector;
 
   private MetaClass(Class<?> type, ReflectorFactory reflectorFactory) {
     this.reflectorFactory = reflectorFactory;
+    //将configuration放入到hashMap当中并返回 一个Reflector实体类
     this.reflector = reflectorFactory.findForClass(type);
   }
 

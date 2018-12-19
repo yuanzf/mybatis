@@ -117,9 +117,17 @@ public class XPathParser {
 
   public XPathParser(Reader reader, boolean validation, Properties variables, EntityResolver entityResolver) {
     commonConstructor(validation, variables, entityResolver);
+    //将xml解析我Document
     this.document = createDocument(new InputSource(reader));
   }
 
+  /**
+   * 解析mybatis配置文件   （dom解析方法）
+   * @param inputStream  读取mybatis配置文件产生的Stream
+   * @param validation true
+   * @param variables  null
+   * @param entityResolver  new XMLMapperEntityResolver() 解析myBatis DTD文件
+   */
   public XPathParser(InputStream inputStream, boolean validation, Properties variables, EntityResolver entityResolver) {
     commonConstructor(validation, variables, entityResolver);
     this.document = createDocument(new InputSource(inputStream));
@@ -225,16 +233,26 @@ public class XPathParser {
     }
   }
 
+  /**
+   * 将InputSource解析成Document
+   * @param inputSource  Mybatis配置文件的流
+   * @return
+   */
   private Document createDocument(InputSource inputSource) {
     // important: this must only be called AFTER common constructor
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      //表示是否验证xml文件，这个验证是DTD验证
       factory.setValidating(validation);
-
+      //表示是否支持xml命名空间
       factory.setNamespaceAware(false);
+      //是否忽略注释
       factory.setIgnoringComments(true);
+      //是否忽略元素中的空白
       factory.setIgnoringElementContentWhitespace(false);
+      //是否将CDATA节点转化为text节点，并附加到相邻的Text节点上
       factory.setCoalescing(false);
+      //是否扩展实体引用节点
       factory.setExpandEntityReferences(true);
 
       DocumentBuilder builder = factory.newDocumentBuilder();
@@ -254,6 +272,7 @@ public class XPathParser {
         public void warning(SAXParseException exception) throws SAXException {
         }
       });
+      //将inputSource解析成Document文档
       return builder.parse(inputSource);
     } catch (Exception e) {
       throw new BuilderException("Error creating document instance.  Cause: " + e, e);

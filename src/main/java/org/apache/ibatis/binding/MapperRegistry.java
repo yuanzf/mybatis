@@ -68,7 +68,9 @@ public class MapperRegistry {
         // It's important that the type is added before the parser is run
         // otherwise the binding may automatically be attempted by the
         // mapper parser. If the type is already known, it won't try.
+        // parser 保存了解析Mapper所有信息，包括类型映射，文件路径，配置信息，（所有的信息都包括）
         MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
+        //解析Mapper中的SQL语句
         parser.parse();
         loadCompleted = true;
       } finally {
