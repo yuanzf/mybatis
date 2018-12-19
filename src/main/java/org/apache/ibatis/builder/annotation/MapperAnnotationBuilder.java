@@ -118,7 +118,7 @@ public class MapperAnnotationBuilder {
   }
 
   /**
-   * resource = com/yuanzf/base/mapper/UserMapper.java (best guess)
+   * resource = com.yuanzf.debug/mapper/UserMapper.java (best guess)
    * @param configuration
    * @param type
    */

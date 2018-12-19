@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanzf.debug.mapper.UserMapper">
+
+    <resultMap id="userMapper" type="com.yuanzf.debug.model.UserModel">
+        <id property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="name" column="name"/>
+        <result property="level" column="level"/>
+        <result property="address" column="address"/>
+        <result property="telephone" column="telephone"/>
+        <result property="password" column="password"/>
+    </resultMap>
+
+
+    <sql id="all_fields">
+        create_time, update_time, name,level, address,telephone, password
+    </sql>
+
+    <select id="getUserByName" parameterType="String" resultMap="userMapper">
+        SELECT id,
+        <include refid="all_fields"/>
+        FROM user
+        where NAME like CONCAT('%',#{name}, '%') ORDER BY UPDATE_TIME DESC
+    </select>
+
+    <select id="getAllUserList" resultMap="userMapper">
+        select id, <include refid="all_fields" /> from user;
+    </select>
+
+    <select id="countList" resultType="Integer" parameterType="string">
+        select count(1)
+        from user
+        where 1=1
+        <if test="name != null">AND NAME like CONCAT('%',#{name}, '%')</if>
+    </select>
+
+    <update id="updateUser" parameterType="com.yuanzf.debug.model.UserModel">
+        update user set
+        <if test="name != null">
+            name = #{name},
+        </if>
+        <if test=" level != null">
+            level = #{level},
+        </if>
+        <if test="address != null">
+            address = #{address},
+        </if>
+        <if test="telephone != null">
+            telephone = #{telephone},
+        </if>
+        <if test="password != null">
+            password = #{password},
+        </if>
+        update_time = now() where id= #{id}
+    </update>
+
+    <insert id="insertUser" parameterType="com.yuanzf.debug.model.UserModel">
+        INSERT INTO user(
+        <include refid="all_fields"/>
+        )
+        VALUES(NOW(), NOW(), #{name}, #{level}, #{address},
+        #{telephone}, #{password})
+    </insert>
+
+
+    <select id="findUserById" parameterType="int" resultMap="userMapper">
+        SELECT ID,
+        <include refid="all_fields"/>
+        FROM user
+        where id=#{id}
+    </select>
+
+</mapper>

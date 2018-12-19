@@ -407,8 +407,8 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   /**
    * 两种配置方法
-   *         || <package name="com.yuanzf.base.mapper"/>                ||
-   *         || <mapper class="com.yuanzf.base.mapper.UserMapper" />    ||
+   *         || <package name="com.yuanzf.debug.mapper"/>                ||
+   *         || <mapper class="com.yuanzf.debug.mapper.UserMapper" />    ||
    *这两种配置方法只能配置一种
    * 在mapper配置中 有三种配置方法，分别是 "class"、"name"、"resource"这三种属性只能配置一种，否则会抛异常
    *
