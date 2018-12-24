@@ -182,7 +182,7 @@ public class MapperAnnotationBuilder {
     if (!configuration.isResourceLoaded("namespace:" + type.getName())) {
       String xmlResource = type.getName().replace('.', '/') + ".xml";
       // #1347
-      InputStream inputStream = type.getResourceAsStream("/" + xmlResource);
+      InputStream inputStream = type.getResourceAsStream("/" + xmlResource);//读取 mapper.xml配置文件
       if (inputStream == null) {
         // Search XML mapper that is not in the module but in the classpath. 
         try {

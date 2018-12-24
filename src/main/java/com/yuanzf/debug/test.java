@@ -18,7 +18,7 @@ import java.util.List;
 public class test {
     public static void main(String[] args) {
         String resource = "mybatis/mybatis-config.xml";
-        String nameSpace= "com.yuanzf.debug.mapper.UserMapper";
+        String nameSpace = "com.yuanzf.debug.mapper.UserMapper";
         try {
             InputStream resourceAsStream = Resources.getResourceAsStream(resource);
             SqlSessionFactory build = new SqlSessionFactoryBuilder().build(resourceAsStream);
@@ -30,7 +30,7 @@ public class test {
             sqlSession.commit();
             sqlSession.close();
 
-        }catch (Exception    e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

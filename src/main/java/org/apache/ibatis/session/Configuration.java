@@ -740,6 +740,7 @@ public class Configuration {
   }
 
   public <T> void addMapper(Class<T> type) {
+    //解析 type对应的mapper.xml文件
     mapperRegistry.addMapper(type);
   }
 

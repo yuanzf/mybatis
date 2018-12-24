@@ -60,6 +60,10 @@ public class SqlSessionFactoryBuilder {
     }
   }
 
+  /**
+   * @param inputStream mybatis配置文件输入流
+   * @return
+   */
   public SqlSessionFactory build(InputStream inputStream) {
     return build(inputStream, null, null);
   }
