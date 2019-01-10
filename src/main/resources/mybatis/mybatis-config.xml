@@ -27,8 +27,6 @@
     <mappers>
         <!--<package name="com.yuanzf.debug.mapper"/>-->
         <mapper class="com.yuanzf.debug.mapper.UserMapper"/>
-        <mapper class="com.yuanzf.debug.mapper.OrderMapper"/>
-        <mapper class="com.yuanzf.debug.mapper.ProductMapper"/>
     </mappers>
 
 </configuration>

@@ -2,6 +2,7 @@ package com.yuanzf.debug.mapper;
 
 import com.yuanzf.debug.model.UserModel;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -18,4 +19,9 @@ public interface UserMapper {
     void updateUser(UserModel use);
 
     UserModel findUserById(@Param("id") String id);
+
+    @Select("select * from user where id = ${id}")
+    List<UserModel> findAllUser(int id);
+    @Select("select * from user where id = ${id} and name = ${name}")
+    List<UserModel> findUserByIdAndname(int id,String name);
 }

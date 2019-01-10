@@ -126,7 +126,7 @@ public class XPathParser {
    * @param inputStream  读取mybatis配置文件产生的Stream
    * @param validation true
    * @param variables  null
-   * @param entityResolver  new XMLMapperEntityResolver() 解析myBatis DTD文件
+   * @param entityResolver  new XMLMapperEntityResolver() 解析（验证）myBatis DTD文件
    */
   public XPathParser(InputStream inputStream, boolean validation, Properties variables, EntityResolver entityResolver) {
     commonConstructor(validation, variables, entityResolver);

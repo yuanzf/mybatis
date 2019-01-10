@@ -129,7 +129,7 @@ public class MapperAnnotationBuilder {
     this.type = type;
   }
 
-  public void parse() {
+  public void parse() {//解析Mapper.java类中通过注解编写的类，解析成MapperStatemet保存到Configfure中
     String resource = type.toString();
     //判断类名等于"resource"是否加载过
     if (!configuration.isResourceLoaded(resource)) {
@@ -176,13 +176,9 @@ public class MapperAnnotationBuilder {
    * 加载对应的Mapper.xml文件
    */
   private void loadXmlResource() {
-    // Spring may not know the real resource name so we check a flag
-    // to prevent loading again a resource twice
-    // this flag is set at XMLMapperBuilder#bindMapperForNamespace
     if (!configuration.isResourceLoaded("namespace:" + type.getName())) {
       String xmlResource = type.getName().replace('.', '/') + ".xml";
-      // #1347
-      //读取 mapper.xml配置文件
+      //读取 mapper.xml文件
       InputStream inputStream = type.getResourceAsStream("/" + xmlResource);
       if (inputStream == null) {
         // Search XML mapper that is not in the module but in the classpath. 
@@ -376,7 +372,7 @@ public class MapperAnnotationBuilder {
         }
         resultMapId = sb.toString();
       } else if (isSelect) {
-        resultMapId = parseResultMap(method);
+        resultMapId = parseResultMap(method);//解析返回值
       }
 
       assistant.addMappedStatement(

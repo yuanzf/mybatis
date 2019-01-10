@@ -52,7 +52,7 @@ import org.apache.ibatis.type.TypeHandler;
  * parser:保存通过xml解析的信息
  * builderAssistant： 保存Mapper构造的所有信息
  * resource： mapper.xml 文件的路径
- *
+ *sqlFragments mapper.xml中对应SQL标签
  * @author Clinton Begin
  */
 public class XMLMapperBuilder extends BaseBuilder {

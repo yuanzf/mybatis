@@ -20,7 +20,7 @@
         create_time, update_time, name,level, address,telephone, password
     </sql>
 
-    <select id="getUserByName" parameterType="String" resultMap="userMapper">
+    <select id="getUserByName" parameterType="String" resultMap="userMapper" >
         SELECT id,
         <include refid="all_fields"/>
         FROM user

@@ -58,10 +58,10 @@ public class XMLStatementBuilder extends BaseBuilder {
    * 具体的解析过程
    */
   public void parseStatementNode() {
-    String id = context.getStringAttribute("id");
+    String id = context.getStringAttribute("id");//获取SQLid，与Mapper.java文件中方法名对应
     String databaseId = context.getStringAttribute("databaseId");
 
-    if (!databaseIdMatchesCurrent(id, databaseId, this.requiredDatabaseId)) {
+    if (!databaseIdMatchesCurrent(id, databaseId, this.requiredDatabaseId)) {//验证databaseId是否匹配
       return;
     }
 
@@ -92,7 +92,7 @@ public class XMLStatementBuilder extends BaseBuilder {
 
     // Include Fragments before parsing
     XMLIncludeTransformer includeParser = new XMLIncludeTransformer(configuration, builderAssistant);
-    includeParser.applyIncludes(context.getNode());
+    includeParser.applyIncludes(context.getNode());//采用递归调用，近些sql中包含的 include
 
     // Parse selectKey after includes and remove them.
     processSelectKeyNodes(id, parameterTypeClass, langDriver);

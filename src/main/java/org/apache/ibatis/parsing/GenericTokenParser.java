@@ -30,6 +30,11 @@ public class GenericTokenParser {
     this.handler = handler;
   }
 
+  /**
+   * 解析${} sql语句中的变量
+   * @param text
+   * @return
+   */
   public String parse(String text) {
     if (text == null || text.isEmpty()) {
       return "";
