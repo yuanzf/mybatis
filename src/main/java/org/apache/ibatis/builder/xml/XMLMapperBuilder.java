@@ -52,7 +52,7 @@ import org.apache.ibatis.type.TypeHandler;
  * parser:保存通过xml解析的信息
  * builderAssistant： 保存Mapper构造的所有信息
  * resource： mapper.xml 文件的路径
- *sqlFragments mapper.xml中对应SQL标签
+ *sqlFragments 从其他mapper.xml中解析的SQL片段
  * @author Clinton Begin
  */
 public class XMLMapperBuilder extends BaseBuilder {
@@ -93,6 +93,7 @@ public class XMLMapperBuilder extends BaseBuilder {
   }
 
   public void parse() {
+    //判断Mapper文件是否已经加载过
     if (!configuration.isResourceLoaded(resource)) {
       configurationElement(parser.evalNode("/mapper"));
       configuration.addLoadedResource(resource);
@@ -119,12 +120,23 @@ public class XMLMapperBuilder extends BaseBuilder {
         throw new BuilderException("Mapper's namespace cannot be empty");
       }
       builderAssistant.setCurrentNamespace(namespace);
+
+      //解析cache-ref节点 ${<cache-ref namespace="" />}
       cacheRefElement(context.evalNode("cache-ref"));
+
+      //解析cache节点 ${<cache  readOnly="" blocking=" " eviction="" flushInterval="" size="" type=""/>}
       cacheElement(context.evalNode("cache"));
+
+      //解析parameterMap 已废弃！老式风格的参数映射
       parameterMapElement(context.evalNodes("/mapper/parameterMap"));
+
+      //解析resultMap ${<resultMap id="" type=""> .... </resultMap>}
       resultMapElements(context.evalNodes("/mapper/resultMap"));
+
+      //解析SQl ${<sql id="" />}
       sqlElement(context.evalNodes("/mapper/sql"));
-      //context.evalNodes("select|insert|update|delete") 获取mpper文件中所有的 select，insert update、delete的语句
+
+      //获取mapper.xml文件中所有的 select，insert update、delete的语句
       buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing Mapper XML. The XML location is '" + resource + "'. Cause: " + e, e);

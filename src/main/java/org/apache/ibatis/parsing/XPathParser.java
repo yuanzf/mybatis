@@ -213,6 +213,11 @@ public class XPathParser {
     return xnodes;
   }
 
+  /**
+   * 从document中获取#{expression}节点
+   * @param expression
+   * @return
+   */
   public XNode evalNode(String expression) {
     return evalNode(document, expression);
   }

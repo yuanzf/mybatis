@@ -133,7 +133,7 @@ public class MapperAnnotationBuilder {
     String resource = type.toString();
     //判断类名等于"resource"是否加载过
     if (!configuration.isResourceLoaded(resource)) {
-      //加载对应的mapper.xml文件
+      //加载对应的mapper.xml文件并解析Mapper.xml文件
       loadXmlResource();
 
       configuration.addLoadedResource(resource);
@@ -181,11 +181,9 @@ public class MapperAnnotationBuilder {
       //读取 mapper.xml文件
       InputStream inputStream = type.getResourceAsStream("/" + xmlResource);
       if (inputStream == null) {
-        // Search XML mapper that is not in the module but in the classpath. 
         try {
           inputStream = Resources.getResourceAsStream(type.getClassLoader(), xmlResource);
         } catch (IOException e2) {
-          // ignore, resource is not required
         }
       }
       if (inputStream != null) {

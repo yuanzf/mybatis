@@ -56,7 +56,13 @@ import org.apache.ibatis.type.TypeHandler;
  */
 public class MapperBuilderAssistant extends BaseBuilder {
 
+  /**
+   * mapper.xml定义的namespace
+   */
   private String currentNamespace;
+  /**
+   * mapper.xml对一个的路径
+   */
   private final String resource;
   private Cache currentCache;
   private boolean unresolvedCacheRef; // issue #676
