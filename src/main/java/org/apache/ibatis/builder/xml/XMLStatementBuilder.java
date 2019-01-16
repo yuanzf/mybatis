@@ -67,10 +67,12 @@ public class XMLStatementBuilder extends BaseBuilder {
    * 具体的解析过程
    */
   public void parseStatementNode() {
-    String id = context.getStringAttribute("id");//获取SQLid，与Mapper.java文件中方法名对应
+    //获取SQLid，与Mapper.java文件中方法名对应
+    String id = context.getStringAttribute("id");
     String databaseId = context.getStringAttribute("databaseId");
 
-    if (!databaseIdMatchesCurrent(id, databaseId, this.requiredDatabaseId)) {//验证databaseId是否匹配
+    //验证databaseId是否匹配
+    if (!databaseIdMatchesCurrent(id, databaseId, this.requiredDatabaseId)) {
       return;
     }
     /* <==================开始解析 select | update | insert | delete 节点定义的属性值 ====================> */
