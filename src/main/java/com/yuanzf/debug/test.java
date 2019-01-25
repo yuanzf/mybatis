@@ -23,7 +23,7 @@ public class test {
             InputStream resourceAsStream = Resources.getResourceAsStream(resource);
             SqlSessionFactory build = new SqlSessionFactoryBuilder().build(resourceAsStream);
             SqlSession sqlSession = build.openSession();
-//            List<Object> allUserList = sqlSession.selectList(nameSpace + ".getAllUserList");
+            /* List<Object> allUserList = sqlSession.selectList(nameSpace + ".getAllUserList"); */
             UserMapper mapper = sqlSession.getMapper(UserMapper.class);
             List<UserModel> allUserList = mapper.getAllUserList();
             System.out.println(allUserList);

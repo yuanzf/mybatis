@@ -15,13 +15,11 @@ import java.util.Objects;
  */
 public class ProxyMain {
     public static void main(String[] args) {
-        Class shopAClass = ShopA.class;
-        ShopA shopA1 = new ShopA();
-        shopA1.buy("test");
-        TestInvocationHandler testInvocationHandler = new TestInvocationHandler(shopA1);
+        TestInvocationHandler testInvocationHandler = new TestInvocationHandler();
         Marketting shopA =(Marketting) Proxy.newProxyInstance(Marketting.class.getClassLoader(), new Class[]{Marketting.class}, testInvocationHandler);
         System.out.println("before");
-        shopA.sell();
+        String shopA1 = shopA.sell("shopA");
+        System.out.println(shopA1);
         System.out.println("after");
     }
 }

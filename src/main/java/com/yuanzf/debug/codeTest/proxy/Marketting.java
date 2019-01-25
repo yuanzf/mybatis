@@ -9,5 +9,5 @@ public interface Marketting {
 
     void buy(String market);
 
-    String sell();
+    String sell(String shop );
 }

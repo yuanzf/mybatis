@@ -15,7 +15,7 @@ public class ShopB implements Marketting {
     }
 
     @Override
-    public String sell() {
-        return market;
+    public String sell(String shop) {
+        return "this shop B";
     }
 }

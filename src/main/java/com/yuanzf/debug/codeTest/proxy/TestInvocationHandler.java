@@ -2,6 +2,8 @@ package com.yuanzf.debug.codeTest.proxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author: yzf
@@ -10,14 +12,22 @@ import java.lang.reflect.Method;
  */
 public class TestInvocationHandler implements InvocationHandler {
 
-    private Marketting marketting;
+    private Map<String, Marketting> allShop = new HashMap<>();
+    private Marketting object;
 
-    public TestInvocationHandler(Marketting marketting) {
-        this.marketting = marketting;
+    public TestInvocationHandler() {
+        allShop.put("shopA", new ShopA());
+        allShop.put("shopB", new ShopB());
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            return method.invoke(this,args);
+        if (args[0].equals("shopA")) {
+            this.object = allShop.get("shopA");
+        }
+        if (args[0].equals("shopB")) {
+            this.object = allShop.get("shopB");
+        }
+        return method.invoke(object, args);
     }
 }
