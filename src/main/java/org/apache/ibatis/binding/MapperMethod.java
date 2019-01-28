@@ -54,7 +54,7 @@ public class MapperMethod {
         this.method = new MethodSignature(config, mapperInterface, method);
     }
 
-    public Object execute(SqlSession sqlSession, Object[] args) {
+    public Object execute(SqlSession sqlSession, Object[] args) { //args 犯法传递的参数
         Object result;
         switch (command.getType()) {
             case INSERT: {
@@ -139,8 +139,8 @@ public class MapperMethod {
 
     private <E> Object executeForMany(SqlSession sqlSession, Object[] args) {
         List<E> result;
-        Object param = method.convertArgsToSqlCommandParam(args); //设置参数
-        if (method.hasRowBounds()) {
+        Object param = method.convertArgsToSqlCommandParam(args); //解析参数（单参数叫多是，返回的是一个map）
+        if (method.hasRowBounds()) {//分页
             RowBounds rowBounds = method.extractRowBounds(args);
             result = sqlSession.<E>selectList(command.getName(), param, rowBounds);
         } else {

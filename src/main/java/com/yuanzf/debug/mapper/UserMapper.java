@@ -14,6 +14,8 @@ public interface UserMapper {
 
     int countList();
 
+    UserModel getByName(@Param("id") int id, @Param("name") String name);
+
     void insertUser(UserModel model);
 
     void updateUser(UserModel use);
@@ -22,6 +24,8 @@ public interface UserMapper {
 
     @Select("select * from user where id = ${id}")
     List<UserModel> findAllUser(int id);
+
+
     @Select("select * from user where id = ${id} and name = ${name}")
     List<UserModel> findUserByIdAndname(int id,String name);
 }

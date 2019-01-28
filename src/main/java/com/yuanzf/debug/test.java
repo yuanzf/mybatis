@@ -25,8 +25,8 @@ public class test {
             SqlSession sqlSession = build.openSession();
             /* List<Object> allUserList = sqlSession.selectList(nameSpace + ".getAllUserList"); */
             UserMapper mapper = sqlSession.getMapper(UserMapper.class);
-            List<UserModel> allUserList = mapper.getAllUserList();
-            System.out.println(allUserList);
+            UserModel yuan = mapper.getByName(3, "yuan");
+            System.out.println(yuan);
             sqlSession.commit();
             sqlSession.close();
 

@@ -74,4 +74,8 @@
         where id=#{id}
     </select>
 
+    <select id="getByName" parameterType="map" resultMap="userMapper" >
+        SELECT  <include refid="all_fields" /> from user where id = ${id} and name = #{name}
+    </select>
+
 </mapper>

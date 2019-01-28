@@ -107,7 +107,7 @@ public class ParamNameResolver {
    * ...).
    * </p>
    */
-  public Object getNamedParams(Object[] args) {
+  public Object getNamedParams(Object[] args) { //解析sql中的参数
     final int paramCount = names.size();
     if (args == null || paramCount == 0) {
       return null;
