@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -23,7 +24,11 @@ public class test {
             InputStream resourceAsStream = Resources.getResourceAsStream(resource);
             SqlSessionFactory build = new SqlSessionFactoryBuilder().build(resourceAsStream);
             SqlSession sqlSession = build.openSession();
-            /* List<Object> allUserList = sqlSession.selectList(nameSpace + ".getAllUserList"); */
+
+//            HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+//            stringObjectHashMap.put("id",1);
+//            stringObjectHashMap.put("name","yuan");
+//            UserModel yuan = sqlSession.selectOne(nameSpace + ".getByName", stringObjectHashMap);
             UserMapper mapper = sqlSession.getMapper(UserMapper.class);
             UserModel yuan = mapper.getByName(3, "yuan");
             System.out.println(yuan);

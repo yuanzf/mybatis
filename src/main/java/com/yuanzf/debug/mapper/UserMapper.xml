@@ -11,7 +11,7 @@
         <result property="name" column="name"/>
         <result property="level" column="level"/>
         <result property="address" column="address"/>
-        <result property="telephone" column="telephone"/>
+        <result property="telephone" column="telephone" />
         <result property="password" column="password"/>
     </resultMap>
 
@@ -67,15 +67,18 @@
     </insert>
 
 
+    <select id="getByName" parameterType="map" resultMap="userMapper" >
+        SELECT  <include refid="all_fields" /> from user where id = ${id}
+        <if test="name != null">
+            and name = #{name}
+        </if>
+    </select>
+
     <select id="findUserById" parameterType="int" resultMap="userMapper">
         SELECT ID,
         <include refid="all_fields"/>
         FROM user
         where id=#{id}
-    </select>
-
-    <select id="getByName" parameterType="map" resultMap="userMapper" >
-        SELECT  <include refid="all_fields" /> from user where id = ${id} and name = #{name}
     </select>
 
 </mapper>

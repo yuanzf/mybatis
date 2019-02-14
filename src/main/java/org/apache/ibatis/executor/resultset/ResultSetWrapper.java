@@ -46,6 +46,7 @@ public class ResultSetWrapper {
   private final List<String> classNames = new ArrayList<>();
   private final List<JdbcType> jdbcTypes = new ArrayList<>();
   private final Map<String, Map<Class<?>, TypeHandler<?>>> typeHandlerMap = new HashMap<>();
+  //保存Mapper.xml中定义的resultMap定义colom与数据库字段匹配的名称
   private final Map<String, List<String>> mappedColumnNamesMap = new HashMap<>();
   private final Map<String, List<String>> unMappedColumnNamesMap = new HashMap<>();
 
@@ -54,10 +55,13 @@ public class ResultSetWrapper {
     this.typeHandlerRegistry = configuration.getTypeHandlerRegistry();
     this.resultSet = rs;
     final ResultSetMetaData metaData = rs.getMetaData();
+    //返回列的数目
     final int columnCount = metaData.getColumnCount();
     for (int i = 1; i <= columnCount; i++) {
+      //将数据查询到的数据类型映射到java类型（每个字段都有映射）
       columnNames.add(configuration.isUseColumnLabel() ? metaData.getColumnLabel(i) : metaData.getColumnName(i));
       jdbcTypes.add(JdbcType.forCode(metaData.getColumnType(i)));
+      //获取mysql类型对应的java类型（如int 对应 Integer）在 MysqlType（Mysql-connector包中定义）
       classNames.add(metaData.getColumnClassName(i));
     }
   }
@@ -147,7 +151,9 @@ public class ResultSetWrapper {
     final String upperColumnPrefix = columnPrefix == null ? null : columnPrefix.toUpperCase(Locale.ENGLISH);
     final Set<String> mappedColumns = prependPrefixes(resultMap.getMappedColumns(), upperColumnPrefix);
     for (String columnName : columnNames) {
+      //遍历mysql从数据出查询出来的列（数据库定义的列名称）
       final String upperColumnName = columnName.toUpperCase(Locale.ENGLISH);
+      //可以自动匹配（原因是：在匹配是将列名称转化为大写）
       if (mappedColumns.contains(upperColumnName)) {
         mappedColumnNames.add(upperColumnName);
       } else {

@@ -347,8 +347,8 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   private void handleRowValuesForSimpleResultMap(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler<?> resultHandler, RowBounds rowBounds, ResultMapping parentMapping)
       throws SQLException {
     DefaultResultContext<Object> resultContext = new DefaultResultContext<>();
-    ResultSet resultSet = rsw.getResultSet();
-    skipRows(resultSet, rowBounds);
+    ResultSet resultSet = rsw.getResultSet();//获取查询数据库的结果
+    skipRows(resultSet, rowBounds);//获取分页的目标行
     while (shouldProcessMoreRows(resultContext, rowBounds) && !resultSet.isClosed() && resultSet.next()) {
       ResultMap discriminatedResultMap = resolveDiscriminatedResultMap(resultSet, resultMap, null);
       Object rowValue = getRowValue(rsw, discriminatedResultMap, null);
@@ -394,7 +394,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
   private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
     final ResultLoaderMap lazyLoader = new ResultLoaderMap();
-    Object rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix);
+    Object rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix);//创建映射对象
     if (rowValue != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
       final MetaObject metaObject = configuration.newMetaObject(rowValue);
       boolean foundValues = this.useConstructorMappings;
@@ -473,28 +473,38 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     }
   }
 
+  /**
+   * @param rsw mysql查询结果集的包装
+   * @param resultMap mapper.xml中定义的resultMap标签
+   * @param metaObject
+   * @param columnPrefix 前缀在resultMap中定义
+   * @return
+   * @throws SQLException
+   */
   private List<UnMappedColumnAutoMapping> createAutomaticMappings(ResultSetWrapper rsw, ResultMap resultMap, MetaObject metaObject, String columnPrefix) throws SQLException {
     final String mapKey = resultMap.getId() + ":" + columnPrefix;
     List<UnMappedColumnAutoMapping> autoMapping = autoMappingsCache.get(mapKey);
     if (autoMapping == null) {
       autoMapping = new ArrayList<>();
       final List<String> unmappedColumnNames = rsw.getUnmappedColumnNames(resultMap, columnPrefix);
+      //对每个未匹配上的类型进行处理
       for (String columnName : unmappedColumnNames) {
         String propertyName = columnName;
         if (columnPrefix != null && !columnPrefix.isEmpty()) {
-          // When columnPrefix is specified,
-          // ignore columns without the prefix.
+          //如果columnName以columnPrefix开头则去掉cloumPrefix开头部分
           if (columnName.toUpperCase(Locale.ENGLISH).startsWith(columnPrefix)) {
             propertyName = columnName.substring(columnPrefix.length());
           } else {
             continue;
           }
         }
+        //根据configuration.isMapUnderscoreToCamelCase的值是否使用驼峰法匹配 如 user_order匹配userOrder
         final String property = metaObject.findProperty(propertyName, configuration.isMapUnderscoreToCamelCase());
         if (property != null && metaObject.hasSetter(property)) {
           if (resultMap.getMappedProperties().contains(property)) {
             continue;
           }
+          //获取属性类型，改类型有typeHander则调用TypeHander来处理对应类型
           final Class<?> propertyType = metaObject.getSetterType(property);
           if (typeHandlerRegistry.hasTypeHandler(propertyType, rsw.getJdbcType(columnName))) {
             final TypeHandler<?> typeHandler = rsw.getTypeHandler(propertyType, columnName);
@@ -514,6 +524,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   }
 
   private boolean applyAutomaticMappings(ResultSetWrapper rsw, ResultMap resultMap, MetaObject metaObject, String columnPrefix) throws SQLException {
+    //将之前未匹配上的列做相应的处理
     List<UnMappedColumnAutoMapping> autoMapping = createAutomaticMappings(rsw, resultMap, metaObject, columnPrefix);
     boolean foundValues = false;
     if (!autoMapping.isEmpty()) {
@@ -523,7 +534,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
           foundValues = true;
         }
         if (value != null || (configuration.isCallSettersOnNulls() && !mapping.primitive)) {
-          // gcode issue #377, call setter on nulls (value is not 'found')
+          //将处理后的值设置到目的对象中
           metaObject.setValue(mapping.property, value);
         }
       }

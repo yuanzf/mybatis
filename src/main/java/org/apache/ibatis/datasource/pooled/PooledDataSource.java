@@ -392,31 +392,40 @@ public class PooledDataSource implements DataSource {
     while (conn == null) {
       synchronized (state) {
         if (!state.idleConnections.isEmpty()) {
-          // Pool has available connection
+          //数据库连接池有空闲的连接，则将连接直接返回
           conn = state.idleConnections.remove(0);
           if (log.isDebugEnabled()) {
             log.debug("Checked out connection " + conn.getRealHashCode() + " from pool.");
           }
         } else {
-          // Pool does not have available connection
+          //数据库连接池没有空闲的连接
           if (state.activeConnections.size() < poolMaximumActiveConnections) {
-            // Can create new connection
+            // 如果可用连接小于连接池的最大数量，则创建一个新的连接
             conn = new PooledConnection(dataSource.getConnection(), this);
             if (log.isDebugEnabled()) {
               log.debug("Created connection " + conn.getRealHashCode() + ".");
             }
           } else {
-            // Cannot create new connection
+            // 不能创建新的连接
+            // state.activeConnections列表中第一个时最先被使用的，如果第一个没有超时则后面的都不会超时
             PooledConnection oldestActiveConnection = state.activeConnections.get(0);
+            // 获取oldestActiveConnection连接已使用时间（毫秒）
             long longestCheckoutTime = oldestActiveConnection.getCheckoutTime();
+
+            // 是否大于连接最长使用时间
             if (longestCheckoutTime > poolMaximumCheckoutTime) {
-              // Can claim overdue connection
+              //过期的连接数
               state.claimedOverdueConnectionCount++;
+              //累计连接时间(过期)
               state.accumulatedCheckoutTimeOfOverdueConnections += longestCheckoutTime;
               state.accumulatedCheckoutTime += longestCheckoutTime;
+              //移除过期连接
               state.activeConnections.remove(oldestActiveConnection);
+              //判断是否自动提交；如果不是自动提交则回滚事务
               if (!oldestActiveConnection.getRealConnection().getAutoCommit()) {
+                //如果不是自动提交则回滚事务
                 try {
+                  //sql事务回滚
                   oldestActiveConnection.getRealConnection().rollback();
                 } catch (SQLException e) {
                   /*
@@ -430,17 +439,22 @@ public class PooledDataSource implements DataSource {
                   log.debug("Bad connection. Could not roll back");
                 }  
               }
+              //创建新的连接
               conn = new PooledConnection(oldestActiveConnection.getRealConnection(), this);
+              //设置连接创建时间
               conn.setCreatedTimestamp(oldestActiveConnection.getCreatedTimestamp());
+              //设置最后使用时间
               conn.setLastUsedTimestamp(oldestActiveConnection.getLastUsedTimestamp());
+              //设置oldestActiveConnection为无效连接
               oldestActiveConnection.invalidate();
               if (log.isDebugEnabled()) {
                 log.debug("Claimed overdue connection " + conn.getRealHashCode() + ".");
               }
             } else {
-              // Must wait
+              // 小于最长使用时间，必须等待空闲连接
               try {
                 if (!countedWait) {
+                  //设置等待连接的数目
                   state.hadToWaitCount++;
                   countedWait = true;
                 }
@@ -449,6 +463,7 @@ public class PooledDataSource implements DataSource {
                 }
                 long wt = System.currentTimeMillis();
                 state.wait(poolTimeToWait);
+                //累计等待时间
                 state.accumulatedWaitTime += System.currentTimeMillis() - wt;
               } catch (InterruptedException e) {
                 break;
@@ -457,16 +472,21 @@ public class PooledDataSource implements DataSource {
           }
         }
         if (conn != null) {
-          // ping to server and check the connection is valid or not
+          // 验证连接的合法性
           if (conn.isValid()) {
             if (!conn.getRealConnection().getAutoCommit()) {
               conn.getRealConnection().rollback();
             }
             conn.setConnectionTypeCode(assembleConnectionTypeCode(dataSource.getUrl(), username, password));
+            //设置检查时间
             conn.setCheckoutTimestamp(System.currentTimeMillis());
+            //设置最后使用时间
             conn.setLastUsedTimestamp(System.currentTimeMillis());
+            //将连接加入到可使用的连接队列里
             state.activeConnections.add(conn);
+            //请求数量加1
             state.requestCount++;
+            //累计请求时间
             state.accumulatedRequestTime += System.currentTimeMillis() - t;
           } else {
             if (log.isDebugEnabled()) {
