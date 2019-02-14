@@ -23,8 +23,8 @@
     </environments>
 
     <mappers>
-        <!--<package name="com.yuanzf.debug.mapper"/>-->
-        <mapper class="com.yuanzf.debug.mapper.UserMapper"/>
+        <package name="com.yuanzf.debug.mapper"/>
+        <!--<mapper class="com.yuanzf.debug.mapper.UserMapper"/>-->
     </mappers>
 
 </configuration>

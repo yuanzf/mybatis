@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanzf.debug.mapper.UserOrderMapper">
+
+    <resultMap id="userOrderMapper" type="com.yuanzf.debug.model.UserOrderModel">
+        <id property="id" column="id"/>
+        <result property="name" column="name" />
+        <result property="phone" column="phone" />
+        <collection property="orderModel" ofType="com.yuanzf.debug.model.OrderInfo">
+            <id property="productId" column="productId" />
+            <result property="productName" column="productName" />
+            <result property="productNumber" column="productNumber" />
+            <result property="productPrice" column="productPrice" />
+        </collection>
+    </resultMap>
+
+    <select id="getUserOrderByUserName" parameterType="String" resultMap="userOrderMapper" >
+        SELECT user.id as id, user.name as name ,user.telephone as phone , product.id as produceId, product.name as productName,
+               product.number as productNumber, product.price as productPrice from user
+        left join product_order on user.id = product_order.user_id
+        left join product on product.id = product_order.product_id
+        where user.name = #{name}
+    </select>
+</mapper>
