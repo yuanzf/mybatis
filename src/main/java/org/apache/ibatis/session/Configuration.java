@@ -560,6 +560,7 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
+    //是否开启二级缓存
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }

@@ -44,6 +44,7 @@ public final class MappedStatement {
   private Cache cache;
   private ParameterMap parameterMap;
   private List<ResultMap> resultMaps;
+  //查询时清空缓存
   private boolean flushCacheRequired;
   private boolean useCache;
   private boolean resultOrdered;

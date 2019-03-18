@@ -286,13 +286,13 @@ public class XMLMapperBuilder extends BaseBuilder {
     ErrorContext.instance().activity("processing " + resultMapNode.getValueBasedIdentifier());
     String id = resultMapNode.getStringAttribute("id",
         resultMapNode.getValueBasedIdentifier());
-    String type = resultMapNode.getStringAttribute("type",
-        resultMapNode.getStringAttribute("ofType",
-            resultMapNode.getStringAttribute("resultType",
-                resultMapNode.getStringAttribute("javaType"))));
+    String type = resultMapNode.getStringAttribute("type", //优先级最高
+        resultMapNode.getStringAttribute("ofType", //oftype优先级在次之
+            resultMapNode.getStringAttribute("resultType", //resultType 优先级次之
+                resultMapNode.getStringAttribute("javaType"))));//javaType 优先级最低5
     String extend = resultMapNode.getStringAttribute("extends");
     Boolean autoMapping = resultMapNode.getBooleanAttribute("autoMapping");
-    Class<?> typeClass = resolveClass(type);
+    Class<?> typeClass = resolveClass(type);//从configuration中获取type对应的类型处理器
     if (typeClass == null) {
       typeClass = inheritEnclosingType(resultMapNode, enclosingType);
     }

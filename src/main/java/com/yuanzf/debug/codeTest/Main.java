@@ -9,8 +9,9 @@ import com.yuanzf.debug.codeTest.proxy.ShopA;
  */
 public class Main {
     public static void main(String[] args) {
-        Class<?>[] interfaces = GetInterfaceTest.class.getInterfaces();
-        System.out.println(interfaces);
+        Integer integer = Integer.valueOf(1000);
+        Integer integer1 = Integer.valueOf(1000);
+        System.out.println(integer == integer1);
     }
 }
 

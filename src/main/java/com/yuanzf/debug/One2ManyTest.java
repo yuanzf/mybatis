@@ -1,9 +1,6 @@
 package com.yuanzf.debug;
 
-import com.yuanzf.debug.mapper.UserMapper;
 import com.yuanzf.debug.mapper.UserOrderMapper;
-import com.yuanzf.debug.model.OrderInfo;
-import com.yuanzf.debug.model.UserModel;
 import com.yuanzf.debug.model.UserOrderModel;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;

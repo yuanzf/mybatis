@@ -37,6 +37,17 @@ public interface Executor {
 
   int update(MappedStatement ms, Object parameter) throws SQLException;
 
+  /**
+   * 执行SQL
+   * @param ms  查询映射
+   * @param parameter 根据查询参数生成的参数信息
+   * @param rowBounds 分页信息
+   * @param resultHandler  返回结果类型处理器
+   * @param cacheKey 根据sql信息生成的缓存key信息
+   * @param boundSql 查询SQL的信息
+   * @return
+   * @throws SQLException
+   */
   <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey cacheKey, BoundSql boundSql) throws SQLException;
 
   <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException;
