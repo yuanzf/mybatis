@@ -155,7 +155,6 @@ public abstract class BaseExecutor implements Executor {
             queryStack++;
             list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
             if (list != null) {
-
                 handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
             } else {
                 //查询数据库

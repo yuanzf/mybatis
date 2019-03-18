@@ -44,7 +44,9 @@ public final class MappedStatement {
   private Cache cache;
   private ParameterMap parameterMap;
   private List<ResultMap> resultMaps;
-  //查询时清空缓存
+  /**
+   * 当为非select语句是必定为true；此值通过flushCache="true"来配置
+   * */
   private boolean flushCacheRequired;
   private boolean useCache;
   private boolean resultOrdered;

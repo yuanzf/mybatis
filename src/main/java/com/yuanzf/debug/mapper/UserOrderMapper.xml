@@ -16,7 +16,7 @@
         </collection>
     </resultMap>
 
-    <select id="getUserOrderByUserName" parameterType="String" resultMap="userOrderMapper" >
+    <select id="getUserOrderByUserName" parameterType="String" resultMap="userOrderMapper">
         SELECT user.id as id, user.name as name ,user.telephone as phone , product.id as produceId, product.name as productName,
                product.number as productNumber, product.price as productPrice from user
         left join product_order on user.id = product_order.user_id
