@@ -29,6 +29,8 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * 每个select | update | delete | insert 标签对应一个MappedStatement
+ *
  * @author Clinton Begin
  */
 public final class MappedStatement {
@@ -37,21 +39,53 @@ public final class MappedStatement {
   private Configuration configuration;
   private String id;
   private Integer fetchSize;
+  /**
+   * 对应 select | update | insert | delete 中的timeout属性
+   * */
   private Integer timeout;
+  /**
+   * 对应 select | update | insert | delete 中的statementType属性
+   * */
   private StatementType statementType;
+
+  /**
+   * 对应 select 中的resultSetType属性
+   * */
   private ResultSetType resultSetType;
+  /**
+   * 存放SQL语句；当时动态的SQL语句是，SQL语句会被分成片来存储，如一个if语句对应一个 IfSqlNode
+   * */
   private SqlSource sqlSource;
+  /**
+   * 在mapper中配置的 <cache  />标签中配置的属性
+   * */
   private Cache cache;
+
+  /**
+   * 对应 select | update | insert | delete 中的parameterMap属性
+   * */
   private ParameterMap parameterMap;
   private List<ResultMap> resultMaps;
   /**
    * 当为非select语句是必定为true；此值通过flushCache="true"来配置
    * */
   private boolean flushCacheRequired;
+  /**
+   * useCache = "true | false"来配置（在select标签中配置）
+   * */
   private boolean useCache;
   private boolean resultOrdered;
+  /**
+   * 查询语句的类型SELECT | UPDATE | INSERT | DELETE ...
+   * */
   private SqlCommandType sqlCommandType;
+  /**
+   * insert语句中插入并返回主键
+   * */
   private KeyGenerator keyGenerator;
+  /**
+   * 用于设置getGeneratedKeys方法或selectKey子元素返回值将赋值到领域模型的哪个属性中
+   * */
   private String[] keyProperties;
   private String[] keyColumns;
   private boolean hasNestedResultMaps;
