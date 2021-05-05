@@ -31,7 +31,7 @@ public class test {
 //            UserModel yuan = sqlSession.selectOne(nameSpace + ".getByName", stringObjectHashMap);
             UserMapper mapper = sqlSession.getMapper(UserMapper.class);
             UserModel yuan = mapper.getByName(3, "yuan");
-            System.out.println(yuan);
+            System.out.println(yuan.getAddress());
             sqlSession.commit();
             sqlSession.close();
 

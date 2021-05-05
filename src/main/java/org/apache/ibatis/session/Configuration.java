@@ -82,28 +82,102 @@ public class Configuration {
 
   protected Environment environment;
 
+  /**
+   * 对应<settings> 子标签:允许在嵌套语句中使用分页
+   * <setting name="safeRowBoundsEnabled" value="true"/>
+   */
   protected boolean safeRowBoundsEnabled;
   protected boolean safeResultHandlerEnabled = true;
-  //是否将下划线命名法更改为驼峰命名法默认值为false
+  /**
+   * 是否将下划线命名法更改为驼峰命名法默认值为false
+   * 即从经典数据列名A_COLUMN到经典java属性名aColumn的类似映射
+   * 对应<settings> 子标签:允许在嵌套语句中使用分页
+   * <setting name="safeRowBoundsEnabled" value="true"/>
+   *
+   */
   protected boolean mapUnderscoreToCamelCase;
+
+  /**
+   * 对应<settings> 子标签
+   * <setting name="aggressiveLazyLoading" value="true"/>
+   */
   protected boolean aggressiveLazyLoading;
+  /**
+   * 对应<settings> 子标签,是否允许单一语句返回多结果集（true）
+   * <setting name="multipleResultSetsEnabled" value="true"/>
+   */
   protected boolean multipleResultSetsEnabled = true;
+  /**
+   * 对应<settings> 子标签，允许jdbc支持生成主键，需要驱动兼容
+   * <setting name="useGeneratedKeys" value="true"/>
+   */
   protected boolean useGeneratedKeys;
+  /**
+   * 对应<settings> 子标签，使用列标签代替列名，
+   * <setting name="useColumnLabel" value="true"/>
+   */
   protected boolean useColumnLabel = true;
+  /**
+   * 对应<settings> 子标签
+   * <setting name="cacheEnabled" value="true"/>
+   */
   protected boolean cacheEnabled = true;
+
+  /**
+   * 对应<settings> 子标签 指定结果集值为null时候是否调用映射对象setter(map对象时为put方法)，这对于有
+   *Map.keySet()依赖或者null值初始化的时候是有用的，注意基本类型是不能设置成null的
+   * <setting name="callSettersOnNulls" value="true"/>
+   */
   protected boolean callSettersOnNulls;
   protected boolean useActualParamName = true;
   protected boolean returnInstanceForEmptyRow;
 
+  /**
+   * 对应<settings> 子标签 指定Mybatis增加到日志名称的前缀
+   * <setting name="logPrefix" value=""/>
+   */
   protected String logPrefix;
+  /**
+   * 对应<settings> 子标签 指定Mybatis所用日志的具体实现，未指定时将自动查找
+   * <setting name="logImpl" value=""/>
+   */
   protected Class <? extends Log> logImpl;
   protected Class <? extends VFS> vfsImpl;
+  /**
+   * 对应<settings> 子标签，mybatis利用本地缓存机制（Local Cache）防止循环引用和加速循环嵌套查询
+   * 默认值为SESSION，这种情况下会缓存一个会话中执行所有查询。若设置
+   * <setting name="localCacheScope" value=""/>
+   */
   protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
+
+  /**
+   * 对应<settings> 子标签，当没有为指定参提供特定的jdbc类型时，为空值指定jdbc类型。某些驱动需要指定列的JDBC
+   * 类型，多数情况下直接用一般类型即可，比如NULL、VARCHAR、OTHER\
+   * <setting name="jdbcTypeForNull" value=""/>
+   */
   protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
+
+  /**
+   *指定对象的方法触发一次延迟加载
+   */
   protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
+  /**
+   * 对应<settings> 子标签，设置超时时间，它决定驱动等待数据库相应的秒数。当没有
+   * 设置的时候它读取的是驱动默认时间
+   * <setting name="defaultStatementTimeout" value=""/>
+   */
   protected Integer defaultStatementTimeout;
   protected Integer defaultFetchSize;
+
+  /**
+   * 对应<settings> 子标签，配置默认的执行器
+   * <setting name="defaultExecutorType" value=""/>
+   */
   protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
+  /**
+   * 对应<settings> 子标签，指定Mybatsi应如何自动映射到字段或属性
+   * <setting name="autoMappingBehavior" value="NONE"/>
+   */
   protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
   protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
 
@@ -112,9 +186,24 @@ public class Configuration {
   protected ObjectFactory objectFactory = new DefaultObjectFactory();
   protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
 
+  /**
+   * 对应<settings> 子标签
+   * <setting name="lazyLoadingEnabled" value="true"/>
+   */
   protected boolean lazyLoadingEnabled = false;
+  /**
+   * 对应<settings> 子标签 指定创建Mybatis创建具有延迟加载能力的对象锁用到的代理工具
+   * <setting name="proxyFactory" value=""/>
+   */
   protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
 
+  /**
+   * 如果没有配置DatabaseIdProvider标签，则databaseId为null
+   * 如果配置的DataBaseIdprovider标签，mybatis则会用配置的name值去匹配数据库信息，如果匹配的上就会设置databaseId，否则依旧为null
+   * 如果databaseId不为空，则它智慧找到配置databaseId的SQL
+   * mybatis会加载不带databaseID属性和带有匹配当前数据库databaseId属性的所有语句，如果同时找到带有databaseId和不带databaseId
+   * 的相同语句，则后者会被舍弃。
+   */
   protected String databaseId;
   /**
    * Configuration factory class.
@@ -124,19 +213,54 @@ public class Configuration {
    */
   protected Class<?> configurationFactory;
 
+  /**
+   * 缓存mapper类和mapper类的代理类工厂类（MapperProxyFactory），使用jdk动态代理
+   */
   protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
   protected final InterceptorChain interceptorChain = new InterceptorChain();
+  /**
+   * 类型处理器，Mybatis在预处理语句中设置一个参数时，或者从结果集（ResultSet）中取出一个值时，
+   * 都会用注册了的typeHandler进行处理
+   * typeHandler和别名一样也分系统自定义和用户定义两种
+   */
   protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
+  /**
+   * <typeAliases></typeAliases>
+   * 给类起别名方便我们在Mybatis上下文中使用它，别名分两部分，一部分自定义，一部分系统自定义，见静态代码块
+   * 别名也可以通过配置包名，自动扫描的方式配置别名
+   * 3.也可以使用@Alias注解的方式使用别名
+   */
   protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
+
+  /**
+   * 对应<settings> 子标签 指定动态SQL生成的默认语言
+   * <setting name="defaultScriptingLanguage" value=""/>
+   */
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
   protected final Map<String, MappedStatement> mappedStatements = new StrictMap<>("Mapped Statements collection");
   protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
+  /**
+   * 这是在各个Mapper.xml中定义的<resultMap />
+   * key ====> id
+   * value ====> 解析出的对象
+   */
   protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
+  /**
+   * <parameterMap id="" type=""></parameterMap>
+   * 缓存parameterMap标签的内容
+   */
   protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
   protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<>("Key Generators collection");
 
+  /**
+   * 记录所有的已加载的mapper.xml文件
+   */
   protected final Set<String> loadedResources = new HashSet<>();
+  /**
+   * mapper文件中的<sql/>标签
+   * 在解析mapper（XMLMapperBuilder）通过引用的方式传递到XMLMapperBuilder中
+   * */
   protected final Map<String, XNode> sqlFragments = new StrictMap<>("XML fragments parsed from previous mappers");
 
   protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<>();

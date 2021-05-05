@@ -52,14 +52,23 @@ import org.apache.ibatis.type.TypeHandler;
  * parser:保存通过xml解析的信息
  * builderAssistant： 保存Mapper构造的所有信息
  * resource： mapper.xml 文件的路径
- *sqlFragments 从其他mapper.xml中解析的SQL片段
+ *sqlFragments 从mapper.xml中解析的SQL片段,传递的是Configuration#sqlFragments的引用
  * @author Clinton Begin
  */
 public class XMLMapperBuilder extends BaseBuilder {
 
   private final XPathParser parser;
+  /**
+   * 存储Mapper相关信息
+   */
   private final MapperBuilderAssistant builderAssistant;
+  /**
+   * 存储Mapper文件中的《sql />标签内容，和Configurationz中的sqlFragments，是同一个应用，在构造时将Configuration.sqlFragments传递过来
+   */
   private final Map<String, XNode> sqlFragments;
+  /**
+   * xml文件路径
+   */
   private final String resource;
 
   @Deprecated
@@ -95,7 +104,7 @@ public class XMLMapperBuilder extends BaseBuilder {
   public void parse() {
     //判断Mapper文件是否已经加载过
     if (!configuration.isResourceLoaded(resource)) {
-      configurationElement(parser.evalNode("/mapper"));
+      configurationElement(parser.evalNode("/mapper"));//解析Mapper.xml中的SQL语句
       configuration.addLoadedResource(resource);
       bindMapperForNamespace();
     }
@@ -115,7 +124,7 @@ public class XMLMapperBuilder extends BaseBuilder {
    */
   private void configurationElement(XNode context) {
     try {
-      String namespace = context.getStringAttribute("namespace");
+      String namespace = context.getStringAttribute("namespace"); //<mapper namespace=""/>标签,该标签不能空
       if (namespace == null || namespace.equals("")) {
         throw new BuilderException("Mapper's namespace cannot be empty");
       }
@@ -130,7 +139,7 @@ public class XMLMapperBuilder extends BaseBuilder {
       //解析parameterMap 已废弃！老式风格的参数映射
       parameterMapElement(context.evalNodes("/mapper/parameterMap"));
 
-      //解析resultMap ${<resultMap id="" type=""> .... </resultMap>}
+      //解析resultMap ${<resultMap id="" type=""> .... </resultMap>}，执行完毕之后resultMap会保存在Configuration.resultMap中
       resultMapElements(context.evalNodes("/mapper/resultMap"));
 
       //解析SQl ${<sql id="" />}
@@ -268,7 +277,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
-  private void resultMapElements(List<XNode> list) throws Exception {
+  private void  resultMapElements(List<XNode> list) throws Exception {
     for (XNode resultMapNode : list) {
       try {
         resultMapElement(resultMapNode);
@@ -292,14 +301,14 @@ public class XMLMapperBuilder extends BaseBuilder {
                 resultMapNode.getStringAttribute("javaType"))));//javaType 优先级最低5
     String extend = resultMapNode.getStringAttribute("extends");
     Boolean autoMapping = resultMapNode.getBooleanAttribute("autoMapping");
-    Class<?> typeClass = resolveClass(type);//从configuration中获取type对应的类型处理器
+    Class<?> typeClass = resolveClass(type);//从Mapper.xml <resultMap />中获取type对应的类型处理器
     if (typeClass == null) {
       typeClass = inheritEnclosingType(resultMapNode, enclosingType);
     }
     Discriminator discriminator = null;
     List<ResultMapping> resultMappings = new ArrayList<>();
     resultMappings.addAll(additionalResultMappings);
-    List<XNode> resultChildren = resultMapNode.getChildren();
+    List<XNode> resultChildren = resultMapNode.getChildren(); //获取<ResultMap />子标签
     for (XNode resultChild : resultChildren) {
       if ("constructor".equals(resultChild.getName())) {
         processConstructorElement(resultChild, typeClass, resultMappings);

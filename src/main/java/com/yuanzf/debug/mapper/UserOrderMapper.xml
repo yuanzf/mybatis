@@ -2,6 +2,7 @@
 
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--suppress MybatisXMapperXmlInspection -->
 <mapper namespace="com.yuanzf.debug.mapper.UserOrderMapper">
 
     <resultMap id="userOrderMapper" type="com.yuanzf.debug.model.UserOrderModel">
@@ -16,6 +17,10 @@
         </collection>
     </resultMap>
 
+
+    <sql id="all_column" >
+        id ,  name , phone
+    </sql>
     <select id="getUserOrderByUserName" parameterType="String" resultMap="userOrderMapper">
         SELECT user.id as id, user.name as name ,user.telephone as phone , product.id as produceId, product.name as productName,
                product.number as productNumber, product.price as productPrice from user

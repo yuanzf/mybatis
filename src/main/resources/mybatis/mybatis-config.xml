@@ -2,6 +2,45 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+
+    <!--==================mybatis所有设置标签，所有的标签都列出来更易于理解Configuration类===========================-->
+    <!--=========配置所有属性=========-->
+    <!--这个配置方便我们在上下文中使用它,如下文中就使用${test}就使用"123"替换-->
+    <!-- 也可以在resource定义properties文件， -->
+    <!-- 优先级 properties < resource/url <  方法传递的参数 -->
+    <!--<properties resource="">
+        <property name="test" value="123"/>
+    </properties>-->
+    <!--=========设置=========-->
+    <!--<settings>-->
+        <!--<setting name="" value=""/>-->
+    <!--</settings>-->
+
+    <!--=========类型别名=========-->
+    <!--<typeAliases></typeAliases>-->
+    <!--=========类型处理器=========-->
+    <!--<typeHandlers></typeHandlers>-->
+    <!--========= 对象工厂=========-->
+    <!--<objectFactory type=""></objectFactory>-->
+    <!--=========插件=========-->
+    <!--<plugins>-->
+        <!--<plugin interceptor=""></plugin>-->
+    <!--</plugins>-->
+    <!--=========配置环境=========-->
+    <!--<environments default="">-->
+        <!--=========环境变量=========-->
+        <!--<environment id="">-->
+            <!--=========事务管理器=========-->
+            <!-- <transactionManager type=""></transactionManager>-->
+            <!--=========数据源=========-->
+            <!--<dataSource type=""></dataSource>-->
+        <!--</environment>-->
+    <!--</environments>-->
+    <!--=========数据库厂商标志-->
+    <!--<databaseIdProvider type=""></databaseIdProvider>-->
+    <!--=========映射器=========-->
+    <!-- <mappers></mappers>  -->
+    <!--===================结束========================================-->
     <!-- properties必须桌子settings之前，否则会报错 -->
     <properties resource="mybatis/mysql-connect.properties"/>
 
